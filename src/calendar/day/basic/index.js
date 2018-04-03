@@ -1,23 +1,18 @@
-import React, {Component} from 'react';
-import {
-  TouchableOpacity,
-  Text,
-  View
-} from 'react-native';
-import PropTypes from 'prop-types';
+import React, { Component } from "react";
+import { TouchableOpacity, Text, View } from "react-native";
+import PropTypes from "prop-types";
 
-import styleConstructor from './style';
+import styleConstructor from "./style";
 
 class Day extends Component {
   static propTypes = {
     // TODO: disabled props should be removed
-    state: PropTypes.oneOf(['disabled', 'today', '']),
+    state: PropTypes.oneOf(["disabled", "today", ""]),
 
     // Specify theme properties to override specific styles for calendar parts. Default = {}
     theme: PropTypes.object,
     marking: PropTypes.any,
     onPress: PropTypes.func,
-    onLongPress: PropTypes.func,
     date: PropTypes.object
   };
 
@@ -25,33 +20,33 @@ class Day extends Component {
     super(props);
     this.style = styleConstructor(props.theme);
     this.onDayPress = this.onDayPress.bind(this);
-    this.onDayLongPress = this.onDayLongPress.bind(this);
   }
 
   onDayPress() {
     this.props.onPress(this.props.date);
   }
-  onDayLongPress() {
-    this.props.onLongPress(this.props.date);
-  }
 
   shouldComponentUpdate(nextProps) {
-    const changed = ['state', 'children', 'marking', 'onPress'].reduce((prev, next) => {
-      if (prev) {
+    const changed = ["state", "children", "marking", "onPress"].reduce(
+      (prev, next) => {
+        if (prev) {
+          return prev;
+        } else if (nextProps[next] !== this.props[next]) {
+          return next;
+        }
         return prev;
-      } else if (nextProps[next] !== this.props[next]) {
-        return next;
-      }
-      return prev;
-    }, false);
-    if (changed === 'marking') {
+      },
+      false
+    );
+    if (changed === "marking") {
       let markingChanged = false;
       if (this.props.marking && nextProps.marking) {
-        markingChanged = (!(
-          this.props.marking.marked === nextProps.marking.marked
-          && this.props.marking.selected === nextProps.marking.selected
-          && this.props.marking.dotColor === nextProps.marking.dotColor
-          && this.props.marking.disabled === nextProps.marking.disabled));
+        markingChanged = !(
+          this.props.marking.marked === nextProps.marking.marked &&
+          this.props.marking.selected === nextProps.marking.selected &&
+          this.props.marking.dotColor === nextProps.marking.dotColor &&
+          this.props.marking.disabled === nextProps.marking.disabled
+        );
       } else {
         markingChanged = true;
       }
@@ -66,6 +61,7 @@ class Day extends Component {
   render() {
     const containerStyle = [this.style.base];
     const textStyle = [this.style.text];
+    const subTitleStyle = [this.style.subTitle];
     const dotStyle = [this.style.dot];
 
     let marking = this.props.marking || {};
@@ -74,39 +70,56 @@ class Day extends Component {
         marking: true
       };
     }
-    const isDisabled = typeof marking.disabled !== 'undefined' ? marking.disabled : this.props.state === 'disabled';
+    const isDisabled =
+      typeof marking.disabled !== "undefined"
+        ? marking.disabled
+        : this.props.state === "disabled";
     let dot;
     if (marking.marked) {
       dotStyle.push(this.style.visibleDot);
       if (marking.dotColor) {
-        dotStyle.push({backgroundColor: marking.dotColor});
+        dotStyle.push({ backgroundColor: marking.dotColor });
       }
-      dot = (<View style={dotStyle}/>);
+      dot = <View style={dotStyle} />;
     }
 
     if (marking.selected) {
       containerStyle.push(this.style.selected);
       if (marking.selectedColor) {
-        containerStyle.push({backgroundColor: marking.selectedColor});
+        containerStyle.push({ backgroundColor: marking.selectedColor });
       }
       dotStyle.push(this.style.selectedDot);
       textStyle.push(this.style.selectedText);
+      subTitleStyle.push(this.style.selectedText);
     } else if (isDisabled) {
       textStyle.push(this.style.disabledText);
-    } else if (this.props.state === 'today') {
+      subTitleStyle.push(this.style.disabledText);
+    } else if (this.props.state === "today") {
       textStyle.push(this.style.todayText);
+      subTitleStyle.push(this.style.todayText);
+    }
+
+    let subTitleView;
+    if (this.props.subTitleForDate) {
+      let subTitleText = this.props.subTitleForDate(this.props.date);
+      // let subTitleStyle = {
+      //   fontSize: textStyle.fontSize - 2,
+      //   color: textStyle.color || "white"
+      // };
+      subTitleView = <Text style={[subTitleStyle]}>{subTitleText}</Text>;
     }
 
     return (
       <TouchableOpacity
         style={containerStyle}
         onPress={this.onDayPress}
-        onLongPress={this.onDayLongPress}
         activeOpacity={marking.activeOpacity}
         disabled={marking.disableTouchEvent}
       >
-        <Text allowFontScaling={false} style={textStyle}>{String(this.props.children)}</Text>
-        {dot}
+        <Text allowFontScaling={false} style={textStyle}>
+          {String(this.props.children)}
+        </Text>
+        {dot} {subTitleView}
       </TouchableOpacity>
     );
   }

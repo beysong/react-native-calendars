@@ -1,30 +1,36 @@
-import {StyleSheet, Platform} from 'react-native';
-import * as defaultStyle from '../../../style';
+import { StyleSheet, Platform } from "react-native";
+import * as defaultStyle from "../../../style";
 
-const STYLESHEET_ID = 'stylesheet.day.basic';
+const STYLESHEET_ID = "stylesheet.day.basic";
 
-export default function styleConstructor(theme={}) {
-  const appStyle = {...defaultStyle, ...theme};
+export default function styleConstructor(theme = {}) {
+  const appStyle = { ...defaultStyle, ...theme };
   return StyleSheet.create({
     base: {
-      width: 32,
-      height: 32,
-      alignItems: 'center'
+      // width: 32,
+      // height: 32,
+      paddingHorizontal: 5,
+      paddingVertical: 3,
+      alignItems: "center"
     },
     text: {
-      marginTop: Platform.OS === 'android' ? 4 : 6,
+      // marginTop: 4,
       fontSize: appStyle.textDayFontSize,
       fontFamily: appStyle.textDayFontFamily,
-      fontWeight: '300',
+      fontWeight: "300",
       color: appStyle.dayTextColor,
-      backgroundColor: 'rgba(255, 255, 255, 0)'
+      backgroundColor: "rgba(255, 255, 255, 0)"
+    },
+    subTitle: {
+      fontSize: appStyle.textSubTitleFontSize,
+      color: appStyle.subTitleTextColor
     },
     alignedText: {
-      marginTop: Platform.OS === 'android' ? 4 : 6
+      marginTop: Platform.OS === "android" ? 4 : 6
     },
     selected: {
-      backgroundColor: appStyle.selectedDayBackgroundColor,
-      borderRadius: 16
+      backgroundColor: appStyle.selectedDayBackgroundColor
+      // borderRadius: 16
     },
     todayText: {
       color: appStyle.todayTextColor
