@@ -106,7 +106,11 @@ class Day extends Component {
       //   fontSize: textStyle.fontSize - 2,
       //   color: textStyle.color || "white"
       // };
-      subTitleView = <Text style={[subTitleStyle]}>{subTitleText}</Text>;
+      subTitleView = subTitleText ? (
+        <Text style={[subTitleStyle]}>{subTitleText}</Text>
+      ) : (
+        false
+      );
     }
 
     return (
@@ -119,7 +123,8 @@ class Day extends Component {
         <Text allowFontScaling={false} style={textStyle}>
           {String(this.props.children)}
         </Text>
-        {dot} {subTitleView}
+        {subTitleView}
+        {dot}
       </TouchableOpacity>
     );
   }
